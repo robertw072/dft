@@ -1,1 +1,1 @@
-test.dat 1400.0 1.0e-5 boxcar 5 5 3
+test.dat 1400.0 1.0e-5 dft1 5 0 3

@@ -84,6 +84,7 @@ void sg(vector<xy_point> &filter, int n)
 
 void dft(vector<double> dataY, int method, double tol)
 {
+	//cout << "im in the function" << endl;
     int n = dataY.size();
 	gsl_matrix_complex *Z = gsl_matrix_complex_alloc(n, n);	// matrix Z
 	gsl_vector_complex *y = gsl_vector_complex_alloc(dataY.size()); // vector to hold Y values
@@ -95,9 +96,13 @@ void dft(vector<double> dataY, int method, double tol)
 		gsl_vector_complex_set(y, i, complexY);			// store complex y's in a vector 
 	}
 
+	//cout << "am i past the for loop? yuh" << endl;
+
 	double x = ((-2*M_PI)/(double) n);
 	gsl_complex eu;
 	GSL_SET_COMPLEX(&eu, cos(x), sin(x));
+
+	//cout << "im not that far into the function tho" << endl;
 
 	// compute and store complex values in matrix Z
 	for(int j = 0; j <= n-1; j++)
@@ -109,13 +114,15 @@ void dft(vector<double> dataY, int method, double tol)
 
 			eu = gsl_complex_div_real(eu, sqrt((double) n));	// compute eu / sqrt(n)
 			gsl_matrix_complex_set(Z, j, k, eu);
-            //printf ("m(%d,%d) = %g\n", j, k, gsl_matrix_complex_get (Z, j, k));
+           //printf ("m(%d,%d) = %g\n", j, k, gsl_matrix_complex_get (Z, j, k));
 		}
 	}
-
+	cout << "im out the for loop" << endl;
 	gsl_vector_complex *c = gsl_vector_complex_alloc(n);
 	// compute values of c, change this to use gsl_blas_zgemv function 
     gsl_blas_zgemv(CblasNoTrans, GSL_COMPLEX_ONE, Z, y, GSL_COMPLEX_ZERO, c);
+
+//	cout << "im farther into the function now" << endl;
 
     gsl_matrix_complex *d = gsl_matrix_complex_alloc(n, n); // matrix delta used to compute matrix g values
     gsl_complex complexD;
@@ -152,6 +159,8 @@ void dft(vector<double> dataY, int method, double tol)
 
     gsl_blas_zgemv(CblasNoTrans, GSL_COMPLEX_ONE, G, c, GSL_COMPLEX_ZERO, c);   // multiply matrix G by vector c to get Fourier coefficients
 
+//cout << "im here bruh" << endl;
+
     if (method == 0)                                                // solve y = Zi*c, if method == 0
     {
         gsl_matrix_complex *Zi = gsl_matrix_complex_alloc(n, n);    // matrix Zi is the inverse of Z, will hold complex conjugates of Z
@@ -173,7 +182,7 @@ void dft(vector<double> dataY, int method, double tol)
         int signum = 0;
         gsl_linalg_complex_LU_decomp(Z, p, &signum);
 
-        // gsl_linalg_complex_LU_solve(Z, p, c, y);
+        gsl_linalg_complex_LU_solve(Z, p, c, y);
     }
 
     else                                                            // solve c = Z*y, iterative 
@@ -275,7 +284,7 @@ int main()
 
 	double tmspeak = (initroots[initroots.size()-1] + initroots[initroots.size()-2]) / 2.0;
 //	cout << tmspeak << endl;
-
+	cout << "im here man" << endl;
 	for (int i = 0; i < data.size(); i++)
 		data[i].x = data[i].x - tmspeak;
 
